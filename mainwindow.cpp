@@ -16,35 +16,51 @@ MainWindow::~MainWindow()
 void MainWindow::on_testButton_clicked()
 {
     if (ui->statementText->toPlainText().isEmpty() != true) {
-        QString statementText = ui->statementText->toPlainText();
-        QString newStatementText;
 
-        QVector<int> leftIndexes;
-        QVector<int> rightIndexes;
+        QString statementText = ui->statementText->toPlainText();
+        QVector<QString> brackets;
 
         int left = 0, right = 0;
+
         for (int i = 0; i < statementText.length(); i++) {
             if (statementText.at(i) == '(') {
-                newStatementText.push_back(statementText.at(i));
-                leftIndexes.push_back(i);
+                brackets.push_back(statementText.at(i));
                 left++;
             } else if (statementText.at(i) == ')') {
-                newStatementText.push_back(statementText.at(i));
-                rightIndexes.push_back(i);
+                brackets.push_back(statementText.at(i));
                 right++;
             }
         }
 
-        qDebug() << newStatementText;
+        qDebug() << brackets.length() << endl;
+        //qDebug() << statementText.mid(0, 1) << statementText.mid(2, 0);
 
-        while ((rightIndexes.isEmpty() == false) && (leftIndexes.isEmpty() == false)) {
-            /*statementText[leftIndexes.takeFirst()] = "<font color=\"DeepPink\">" + statementText[leftIndexes.first()] + "</font>";
-            statementText[rightIndexes.length()] =  "<font color=\"DeepPink\">" + statementText[rightIndexes.last()] + "</font>";*/
+        int randomNum;
+        QString randomColor;
 
-            statementText = statementText.mid(0, leftIndexes.takeFirst()) + "<font color=\"DeepPink\">" + statementText.mid(leftIndexes.takeFirst(), leftIndexes.takeFirst()) + "</font>"
-                            + statementText.mid(leftIndexes.takeFirst(), statementText.length() - 1);
-            leftIndexes.pop_front();
-            rightIndexes.pop_back();
+        for (int i = 0; i < brackets.length() / 2; i++) {
+            randomNum = rand() % 999999 + 111111;
+            randomColor = "#" + QString::number(randomNum);                        
+            brackets[i] = "<font color=\"" + randomColor + "\">" + brackets[i] + "</font>";
+            brackets[brackets.length() - 1 - i] = "<font color=\"" + randomColor + "\">"
+                                                    + brackets[brackets.length() - 1 - i]
+                                                    + "</font>";
+
+            //ui->statementLabel->setText( brackets[i]);
+            //qDebug() << brackets[i] << brackets[brackets.length() - 1 - i] << endl;
+        }
+
+        for (int i = 0; i < brackets.length(); ++i) {
+            qDebug() << brackets[i] << endl;
+        }
+
+        for (int i = 0; i < statementText.length(); i++) {
+            if (((statementText.at(i) == '(') || (statementText.at(i) == ')')) && (!brackets.isEmpty())) {
+                statementText = statementText.mid(0, i) + brackets.takeFirst()
+                                + statementText.mid(i + 1, statementText.length());
+                i += 29;
+                qDebug() << statementText << endl;
+            }
         }
 
         ui->statementLabel->setText(statementText);
